@@ -84,6 +84,11 @@ function Sphere(props) {
   const mesh = useRef();
   // Subscribe this component to the render-loop, rotate the mesh every frame
   useFrame((state, delta) => (mesh.current.rotation.y += 0.002));
+
+  window.addEventListener('resize', (event) => {
+    console.log(event.target.screen.width)
+  });
+
   return (
     <mesh
       {...props}
