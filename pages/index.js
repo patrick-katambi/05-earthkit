@@ -1,6 +1,49 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+
+import React, { Suspense, useRef, useState } from "react";
+import {
+  Canvas,
+  useFrame,
+  useLoader,
+  extend,
+  useThree,
+} from "@react-three/fiber";
+import { TextureLoader } from "three/src/loaders/TextureLoader";
+
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
+const baseTexturePath = "/assets/textures";
+
+const texturePaths = {
+  colorMap: `${baseTexturePath}/8081_earthmap10k.jpg`,
+  bumpMap: `${baseTexturePath}/8081_earthbump10k.jpg`,
+  specularMap: `${baseTexturePath}/8081_earthspec10k.jpg`,
+};
+
+// Extend will make OrbitControls available as a JSX element called orbitControls for us to use.
+extend({ OrbitControls });
+
+const CameraControls = () => {
+  // Get a reference to the Three.js Camera, and the canvas html element.
+  // We need these to setup the OrbitControls component.
+  // https://threejs.org/docs/#examples/en/controls/OrbitControls
+  const {
+    camera,
+    gl: { domElement },
+  } = useThree();
+  // Ref to the controls, so that we can update them on every frame using useFrame
+  const controls = useRef();
+  useFrame((state) => controls.current.update());
+  return (
+    <orbitControls
+      ref={controls}
+      args={[camera, domElement]}
+      enableZoom={false}
+    />
+  );
+};
 
 export default function Home() {
   return (
@@ -11,59 +54,72 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+      <section className={styles.leftSectionContainer}></section>
+      <section className={styles.sphereSectionContainer}>
+        <SphereModel />
+      </section>
+      <section className={styles.rightSectionContainer}></section>
+      <div className={styles.ring}></div>
     </div>
-  )
+  );
+}
+
+function SphereModel() {
+  return (
+    <Canvas>
+      <CameraControls />
+      <ambientLight />
+      <Suspense fallback={<Loading />}>
+        <Sphere position={[0, 0, 0]} />
+      </Suspense>
+    </Canvas>
+  );
+}
+
+function Sphere(props) {
+  // This reference will give us direct access to the mesh
+  const mesh = useRef();
+  // Subscribe this component to the render-loop, rotate the mesh every frame
+  useFrame((state, delta) => (mesh.current.rotation.y += 0.002));
+  return (
+    <mesh
+      {...props}
+      ref={mesh}
+      scale={2.95}
+      roughness={0.3}
+      metalness={0.3}
+      onClick={(event) => {}}
+      onPointerOver={(event) => {}}
+      onPointerOut={(event) => {}}
+    >
+      <sphereGeometry args={[1, 64, 64]} />
+      <meshStandardMaterial
+        bumpScale={0.05}
+        map={getTexture(texturePaths.colorMap)}
+        normalMap={getTexture(texturePaths.bumpMap)}
+        roughnessMap={getTexture(texturePaths.specularMap)}
+      />
+    </mesh>
+  );
+}
+
+function getTexture(imagePath) {
+  const texture = useLoader(TextureLoader, imagePath);
+  return texture;
+}
+
+function Loading() {
+  return (
+    <mesh visible position={[0, 0, 0]} rotation={[0, 0, 0]} scale={2.95}>
+      <sphereGeometry attach="geometry" args={[1, 64, 64]} />
+      <meshStandardMaterial
+        attach="material"
+        color="white"
+        transparent
+        opacity={0.6}
+        roughness={1}
+        metalness={0}
+      />
+    </mesh>
+  );
 }
