@@ -17,7 +17,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 const baseTexturePath = "/assets/textures";
 
 const texturePaths = {
-  colorMap: `${baseTexturePath}/8081_earthmap10k.jpg`,
+  colorMap: `${baseTexturePath}/8081_earthlights10k.jpg`,
   bumpMap: `${baseTexturePath}/8081_earthbump10k.jpg`,
   specularMap: `${baseTexturePath}/8081_earthspec10k.jpg`,
 };
@@ -54,12 +54,15 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <section className={styles.leftSectionContainer}></section>
+      <section className={styles.leftSectionContainer}>
+        <div className={styles.contents}>
+          <NavigationLeft />
+        </div>
+      </section>
       <section className={styles.sphereSectionContainer}>
         <SphereModel />
       </section>
       <section className={styles.rightSectionContainer}></section>
-      <div className={styles.ring}></div>
     </div>
   );
 }
@@ -121,5 +124,13 @@ function Loading() {
         metalness={0}
       />
     </mesh>
+  );
+}
+
+function NavigationLeft() {
+  return (
+    <p className={styles.logo}>
+      Earth<span className={styles.span}>Kit</span>
+    </p>
   );
 }
