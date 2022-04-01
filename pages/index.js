@@ -1,49 +1,8 @@
+import React from "react";
 import Head from "next/head";
-import Image from "next/image";
+import { SphereModel } from "../modules/Home/sphere_model";
 import styles from "../styles/Home.module.css";
-
-import React, { Suspense, useRef, useState } from "react";
-import {
-  Canvas,
-  useFrame,
-  useLoader,
-  extend,
-  useThree,
-} from "@react-three/fiber";
-import { TextureLoader } from "three/src/loaders/TextureLoader";
-
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-
-const baseTexturePath = "/assets/textures";
-
-const texturePaths = {
-  colorMap: `${baseTexturePath}/8081_earthlights10k.jpg`,
-  bumpMap: `${baseTexturePath}/8081_earthbump10k.jpg`,
-  specularMap: `${baseTexturePath}/8081_earthspec10k.jpg`,
-};
-
-// Extend will make OrbitControls available as a JSX element called orbitControls for us to use.
-extend({ OrbitControls });
-
-const CameraControls = () => {
-  // Get a reference to the Three.js Camera, and the canvas html element.
-  // We need these to setup the OrbitControls component.
-  // https://threejs.org/docs/#examples/en/controls/OrbitControls
-  const {
-    camera,
-    gl: { domElement },
-  } = useThree();
-  // Ref to the controls, so that we can update them on every frame using useFrame
-  const controls = useRef();
-  useFrame((state) => controls.current.update());
-  return (
-    <orbitControls
-      ref={controls}
-      args={[camera, domElement]}
-      enableZoom={false}
-    />
-  );
-};
+import { NavigationLeft } from "../modules/Home/component.navigation_left";
 
 export default function Home() {
   return (
@@ -64,78 +23,5 @@ export default function Home() {
       </section>
       <section className={styles.rightSectionContainer}></section>
     </div>
-  );
-}
-
-function SphereModel() {
-  return (
-    <Canvas>
-      <CameraControls />
-      <ambientLight />
-      <Suspense fallback={<Loading />}>
-        <Sphere position={[0, 0, 0]} />
-      </Suspense>
-    </Canvas>
-  );
-}
-
-function Sphere(props) {
-  // This reference will give us direct access to the mesh
-  const mesh = useRef();
-  // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((state, delta) => (mesh.current.rotation.y += 0.002));
-
-  window.addEventListener('resize', (event) => {
-    console.log(event.target.screen.width)
-  });
-
-  return (
-    <mesh
-      {...props}
-      ref={mesh}
-      scale={2.95}
-      roughness={0.3}
-      metalness={0.3}
-      onClick={(event) => {}}
-      onPointerOver={(event) => {}}
-      onPointerOut={(event) => {}}
-    >
-      <sphereGeometry args={[1, 64, 64]} />
-      <meshStandardMaterial
-        bumpScale={0.05}
-        map={getTexture(texturePaths.colorMap)}
-        normalMap={getTexture(texturePaths.bumpMap)}
-        roughnessMap={getTexture(texturePaths.specularMap)}
-      />
-    </mesh>
-  );
-}
-
-function getTexture(imagePath) {
-  const texture = useLoader(TextureLoader, imagePath);
-  return texture;
-}
-
-function Loading() {
-  return (
-    <mesh visible position={[0, 0, 0]} rotation={[0, 0, 0]} scale={2.95}>
-      <sphereGeometry attach="geometry" args={[1, 64, 64]} />
-      <meshStandardMaterial
-        attach="material"
-        color="white"
-        transparent
-        opacity={0.6}
-        roughness={1}
-        metalness={0}
-      />
-    </mesh>
-  );
-}
-
-function NavigationLeft() {
-  return (
-    <p className={styles.logo}>
-      Earth<span className={styles.span}>Kit</span>
-    </p>
   );
 }
