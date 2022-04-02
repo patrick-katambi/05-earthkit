@@ -1,25 +1,5 @@
-import { useFrame, extend, useThree } from "@react-three/fiber";
-import { useRef } from "react";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-
-extend({ OrbitControls });
+import {OrbitControls} from '@react-three/drei'
 
 export const CameraControls = () => {
-  // Get a reference to the Three.js Camera, and the canvas html element.
-  // We need these to setup the OrbitControls component.
-  // https://threejs.org/docs/#examples/en/controls/OrbitControls
-  const {
-    camera,
-    gl: { domElement },
-  } = useThree();
-  // Ref to the controls, so that we can update them on every frame using useFrame
-  const controls = useRef();
-  useFrame((state) => controls.current.update());
-  return (
-    <orbitControls
-      ref={controls}
-      args={[camera, domElement]}
-      enableZoom={false}
-    />
-  );
+  return <OrbitControls enableZoom={false} enablePan={true} enableRotate={true} rotateSpeed={0.4} />
 };
