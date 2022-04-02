@@ -1,7 +1,10 @@
 ![alt text](https://github.com/patrick-katambi/earthkit/blob/main/earth.PNG?raw=true)
 
-# Planet Earth in space via `code` 🤓
+# Planet Earth in space via code 🤓
+## Link
+[`Visit it here`](https://earthkit-okarlmhcz-patrick-katambi.vercel.app/) as it is deployed on [`vercel`](https://vercel.com/)
 
+## Description
 This is a [`Next.js`](https://nextjs.org/) project with `THREE JS`, `THREE JS FIBER` & `THREE JS DREI`.
 
 ## Getting Started
