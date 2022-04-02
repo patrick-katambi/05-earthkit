@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![alt text](https://github.com/patrick-katambi/earthkit/blob/main/earth.PNG?raw=true)
+
+# Planet Earth in space via `code` 🤓
+
+This is a [`Next.js`](https://nextjs.org/) project with `THREE JS`, `THREE JS FIBER` & `THREE JS DREI`.
 
 ## Getting Started
 
